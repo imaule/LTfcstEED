@@ -1,0 +1,46 @@
+par(mfrow = c(2,2) )	 
+origen <- rep(6.0, 203)
+plot(c(1820:2022), l_EPr[1:203], type = "l", col = "black", lwd = 2, bty= "l",
+xlab = "year", ylab = "Energy", cex.axis = 0.8, cex.lab = 0.9, cex.main = 0.5, cex.sub = 0.5,
+mgp = c(1.3,0.5,0))
+title( main = "1.1. Primary Energy (TWh, logs.)", cex.main = 1, font.main = 1, line = 0 )	
+polygon( c(c(1820:1913), rev(c(1820:1913))), c(l_EPr[1:94], rev(origen[1:94])), 
+density = 35, col=rgb(0.8,0.4,0.1,0.2))
+polygon( c(c(1913:1949), rev(c(1913:1949))), c(l_EPr[94:130], rev(origen[94:130])), 
+density = 35, angle = -45, col=rgb(0.8,0.4,0.1,0.35))
+polygon( c(c(1949:1976), rev(c(1949:1976))), c(l_EPr[130:157], rev(origen[130:157])), 
+density = 35, col=rgb(0.8,0.4,0.1,0.5))
+polygon( c(c(1976:2005), rev(c(1976:2005))), c(l_EPr[157:186], rev(origen[157:186])), 
+density = 35, angle = -45, col=rgb(0.8,0.4,0.1,0.65))
+polygon( c(c(2005:2022), rev(c(2005:2022))), c(l_EPr[186:203], rev(origen[186:203])), 
+density = 35, col=rgb(0.8,0.4,0.1,0.8))
+segments(1820, 6.0, 1820, l_EPr[1])
+segments(1913, 6.0, 1913, l_EPr[94])
+segments(1949, 6.0, 1949, l_EPr[130])
+segments(1976, 6.0, 1976, l_EPr[157])
+segments(2005, 6.0, 2005, l_EPr[186])
+segments(2022, 6.0, 2022, l_EPr[203])
+legend(1910, 7.7, "I", cex = 1.5, xjust = 1, yjust = 1, bty="n")
+legend(1940, 7.7, "II", cex = 1.5, xjust = 1, yjust = 1, bty="n")
+legend(1972, 7.7, "III", cex = 1.5, xjust = 1, yjust = 1, bty="n")
+legend(2000, 7.7, "IV", cex = 1.5, xjust = 1, yjust = 1, bty="n")
+legend(2023, 7.7, "V", cex = 1.5, xjust = 1, yjust = 1, bty="n")
+origen2 <- rep(-7.03, 203)
+l_rat.EY <- l_EPr[1:203] - l_GDP[1:203]
+plot(c(1820:2022), l_rat.EY, type = "l", col = "black", lwd = 2, bty= "l",
+xlab = "year", ylab = "Energy / GDP", cex.axis = 0.8, cex.lab = 0.9, cex.main = 0.5, cex.sub = 0.5,
+mgp = c(1.3,0.5,0))
+title( main = "1.2. Energy / GDP (logs.)", cex.main = 1, font.main = 1, line = 0 )
+polygon( c(c(1820:1849), rev(c(1820:1849))), c(l_rat.EY[1:30], rev(origen2[1:30])), 
+density = 35, angle = -45, col=rgb(0.4,0.8,0.1,0.2))
+polygon( c(c(1849:1918), rev(c(1849:1918))), c(l_rat.EY[30:99], rev(origen2[30:99])), 
+density = 35, col=rgb(0.4,0.8,0.1,0.5))
+polygon( c(c(1918:2022), rev(c(1918:2022))), c(l_rat.EY[99:203], rev(origen2[99:203])), 
+density = 35, angle = -45, col=rgb(0.4,0.8,0.1,0.8))
+segments(1820, -7.03, 1820, l_rat.EY[1])
+segments(1849, -7.03, 1849, l_rat.EY[30])
+segments(1918, -7.03, 1918, l_rat.EY[99])
+segments(2022, -7.03, 2022, l_rat.EY[203])
+legend(1843, -6.34, "    I \n(1820\n-1949)", cex = 0.8, xjust = 1, yjust = 1, bty="n")
+legend(1905, -6.37, "          II \n(1950-1917)", cex = 1, xjust = 1, yjust = 1, bty="n")
+legend(1980, -6.37, "          III \n(1918-2022)", cex = 1, xjust = 1, yjust = 1, bty="n")	

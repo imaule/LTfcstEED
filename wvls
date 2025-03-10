@@ -1,0 +1,24 @@
+OLS.Wv.dat <- lm(Wv.l_EPr[101:203] ~ Wv.l_GDP[101:203] + Wv.Tmpr[101:203])
+summary(OLS.Wv.dat)
+resid <- OLS.Wv.dat$residuals ; res.lr.Wv <- resid
+plot(resid, type="l")
+vcov_nw <- NeweyWest(OLS.Wv.dat, lag = 2, prewhite = TRUE)
+coeftest(OLS.Wv.dat, vcov = vcov_nw)
+vcov_HAC <- vcovHAC(OLS.Wv.dat, prewhite = 2, weights = weightsAndrews,
+ adjust = TRUE, diagnostics = FALSE, sandwich = TRUE, ar.method = "ols")
+coeftest(OLS.Wv.dat, vcov = vcov_HAC)
+d_Wv.l_EPr <- rep(0, 203) ; d_Wv.l_EPr[2:203] <- Wv.l_EPr[2:203] - Wv.l_EPr[1:202]
+d_Wv.l_GDP <- rep(0, 203) ; d_Wv.l_GDP[2:203] <- Wv.l_GDP[2:203] - Wv.l_GDP[1:202]
+d_Wv.Tmpr  <- rep(0, 203) ; d_Wv.Tmpr[2:203]  <- Wv.Tmpr[2:203] - Wv.Tmpr[1:202]	
+OLS.d_Wv.dat <- lm(d_Wv.l_EPr[102:203] ~ d_Wv.l_GDP[102:203] + d_Wv.Tmpr[102:203])
+summary(OLS.d_Wv.dat)
+resid <- OLS.d_Wv.dat$residuals
+vcov_nw <- NeweyWest(OLS.d_Wv.dat, lag = 2, prewhite = TRUE)
+coeftest(OLS.d_Wv.dat, vcov = vcov_nw)
+vcov_HAC <- vcovHAC(OLS.d_Wv.dat, prewhite = 2, weights = weightsAndrews,
+adjust = TRUE, diagnostics = FALSE, sandwich = TRUE, ar.method = "ols")
+coeftest(OLS.d_Wv.dat, vcov = vcov_HAC)
+OLS.ECM.Wv.dat <- lm(d_Wv.l_EPr[102:203] ~ d_Wv.l_GDP[102:203] + d_Wv.Tmpr[102:203] +res.lr.Wv[1:102])
+summary(OLS.ECM.Wv.dat)
+
+

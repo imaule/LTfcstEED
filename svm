@@ -1,0 +1,35 @@
+library(kernlab)
+Kernel <- "laplacedot"   # "rbfdot"	
+scaling <- T
+Cexp <- c(-7, -5, -3, -1, 1, 3, 5, 7, 9, 11, 13, 15, 17)
+ggexp <- c(5, 3, 1, -1, -3, -5, -7, -9, -11, -13, -15, -17)
+t1 <- 102 ; tT <- 203 ; nobs <- (tT - t1 + 1) ; t0 <- t1 - 1 ; tTm1 <- tT - 1
+y <- d_Wv.l_EPr[t1:tT]
+reg.svm <- cbind( d_Wv.l_GDP[t1:tT], d_Wv.Tmpr[t1:tT] )
+library(parallel) ; library(foreach) ; library(doParallel)
+results.iter <- rep(0, 13*12) 
+res.do.loops<- rep(0, 13*12) 
+packs <- c("kernlab", "foreach")
+ksvm.fit <- foreach(ieps=1:30, .packages = packs, .combine='cbind') %dopar% {
+eps <- ieps * 0.01 - 0.001
+foreach (iC=1:13) %do% {
+C0 <- 2^Cexp[iC]  
+foreach (igg=1:12) %do% {
+set.seed()
+sigma0 <- 2^ggexp[igg]
+mod0 <- ksvm(reg.svm, y, scaled = scaling, C = C0, kpar = list(sigma=sigma0), 
+cachesize = 2000, epsilon = eps, kernel = Kernel, cross = 5 )
+results.iter[(iC-1)*12+igg] <- cross(mod0)}}
+res.do.loops <- results.iter}
+order.cross <- array(0, c(13,12,30))
+for (ieps in 1:30) {
+for(iC in 1:13) {
+for(igg in 1:12) {
+order.cross[iC,igg,ieps] <- ksvm.fit[((iC-1)*12+igg),ieps]}}}
+imin <- which( order.cross==min(order.cross), arr.ind = T)
+mod1 <- ksvm(reg.svm, y, scaled = scaling, C = 2^Cexp[imin[1,1]], 
+kpar = list(sigma=2^ggexp[imin[1,2]]), cachesize = 2000,
+epsilon = imin[1,3]*0.01-0.001, kernel = Kernel,
+cross = 5, prob.model = T )
+y.fit <- predict(mod1, reg.svm )  
+

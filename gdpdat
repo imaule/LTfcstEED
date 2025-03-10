@@ -1,0 +1,39 @@
+#  WB (1960 - 2022)
+All_GDP_WB.mx <- as.matrix( read.table("All GDP WB.txt", sep="", dec=".", na.strings="NA", nrows=4, skip=1) )
+FR_GDP_WB <- rep(0, 63) ; GE_GDP_WB <- rep(0, 63)
+IT_GDP_WB <- rep(0, 63) ; SP_GDP_WB <- rep(0, 63)
+FR_GDP_WB <- as.vector(as.numeric(All_GDP_WB.mx[1,6:68]))
+GE_GDP_WB <- as.vector(as.numeric(All_GDP_WB.mx[2,6:68]))
+IT_GDP_WB <- as.vector(as.numeric(All_GDP_WB.mx[3,6:68]))
+SP_GDP_WB <- as.vector(as.numeric(All_GDP_WB.mx[4,6:68]))
+# Madison ; (1820 - 2018)
+FR.mx <- as.matrix( read.table("FR - Y, Pop - Madison.txt", sep="", dec=".", na.strings="NA", nrows=199, skip=2) )
+FR_GDP_MD <- as.numeric(FR.mx[,4])*as.numeric(FR.mx[,5])
+GE.mx <- as.matrix( read.table("GE - Y, Pop, Madison.txt",  sep="", dec=".", na.strings="NA", nrows=199, skip=2) )
+GE_GDP_MD <- as.numeric(GE.mx[,4])*as.numeric(GE.mx[,5])
+inc <- (GE_GDP_MD[31] - GE_GDP_MD[1]) / 30	
+for (i in 2:30) {GE_GDP_MD[i] <- GE_GDP_MD[i-1] + inc}		
+IT.mx <- as.matrix( read.table("IT - Y, Pop - Madison.txt", sep="", dec=".", na.strings="NA", nrows=199, skip=2) )
+IT_GDP_MD <- as.numeric(IT.mx[,4])*as.numeric(IT.mx[,5])
+SP.mx <- as.matrix( read.table("SP - Y, Pop - Madison.txt", sep="", dec=".", na.strings="NA", nrows=199, skip=2) )
+SP_GDP_MD <- as.numeric(SP.mx[,4])*as.numeric(SP.mx[,5])
+inc <- (SP_GDP_MD[6] - SP_GDP_MD[1]) / 5	
+for (i in 2:5) {SP_GDP_MD[i] <- SP_GDP_MD[i-1] + inc}			
+inc <- (SP_GDP_MD[16] - SP_GDP_MD[6]) / 10	
+for (i in 7:15) {SP_GDP_MD[i] <- SP_GDP_MD[i-1] + inc}
+inc <- (SP_GDP_MD[26] - SP_GDP_MD[16]) / 10	
+for (i in 17:25) {SP_GDP_MD[i] <- SP_GDP_MD[i-1] + inc}
+inc <- (SP_GDP_MD[31] - SP_GDP_MD[26]) / 5	
+for (i in 27:30) {SP_GDP_MD[i] <- SP_GDP_MD[i-1] + inc}			
+FR_GDP <- rep(0, 203)	
+FR_GDP[141:203] <- FR_GDP_WB[1:63]
+FR_GDP[1:141] <- FR_GDP_MD[1:141] * (FR_GDP_WB[1] / FR_GDP_MD[141])
+GE_GDP <- rep(0, 203)	
+GE_GDP[151:203] <- GE_GDP_WB[1:53]
+GE_GDP[1:151] <- GE_GDP_MD[1:151] * (GE_GDP_WB[1] / GE_GDP_MD[151])
+IT_GDP <- rep(0, 203)	
+IT_GDP[141:203] <- IT_GDP_WB[1:63]
+IT_GDP[1:141] <- IT_GDP_MD[1:141] * (IT_GDP_WB[1] / IT_GDP_MD[141])
+SP_GDP <- rep(0, 203)	
+SP_GDP[141:203] <- SP_GDP_WB[1:63]
+SP_GDP[1:141] <- SP_GDP_MD[1:141] * (SP_GDP_WB[1] / SP_GDP_MD[141])

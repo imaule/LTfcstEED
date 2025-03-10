@@ -1,0 +1,35 @@
+wv_decomp <- modwt(l_EPr, wf = "la8", n.levels = 5, boundary = "reflection" )
+wv_decomp$d1[1:406] <- 0 ; wv_decomp$d2[1:406] <- 0
+wv_decomp$d3[1:406] <- 0 ; wv_decomp$d4[1:406] <- 0
+Wv.l_EPr <- imodwt(wv_decomp)
+OLS.l_EPr <- lm(l_EPr ~ Wv.l_EPr)	 
+summary(OLS.l_EPr)	
+plot(OLS.l_EPr$residuals, type = "l", col = "black", lwd = 2) 
+resid <- OLS.l_EPr$residuals
+plot(resid, type="l")
+wv_decomp <- modwt(l_GDP, wf = "la8", n.levels = 5, boundary = "reflection" )
+wv_decomp$d1[1:406] <- 0 ; wv_decomp$d2[1:406] <- 0
+wv_decomp$d3[1:406] <- 0 ; wv_decomp$d4[1:406] <- 0
+Wv.l_GDP <- imodwt(wv_decomp)
+plot(l_GDP[102:203], type = "l", col = "black", lwd = 2)
+lines(Wv.l_GDP[102:203], col = "red", lwd = 2)
+lines(t2.l_GDP[102:203], col = "blue", lwd = 2)
+OLS.l_GDP <- lm(l_GDP ~ Wv.l_GDP)	 
+summary(OLS.l_GDP)	
+plot(OLS.l_GDP$residuals, type = "l", col = "black", lwd = 2) 
+resid <- OLS.l_GDP$residuals
+plot(resid, type="l")
+wv_decomp <- modwt(Tmpr , wf = "la8", n.levels = 6, boundary = "reflection" )
+wv_decomp$d1[1:406] <- 0 ; wv_decomp$d2[1:406] <- 0
+wv_decomp$d3[1:406] <- 0 ; wv_decomp$d4[1:406] <- 0
+wv_decomp$d5[1:406] <- 0
+Wt3_Tmpr  <- imodwt(wv_decomp)
+Wv.Tmpr <-	Wt3_Tmpr 
+plot(Tmpr[102:203], type = "l", col = "black", lwd = 2)
+lines(Wv.Tmpr[102:203], col = "red", lwd = 2)
+lines(t2.Tmpr[102:203], col = "lightblue", lwd = 2)
+OLS.Tmpr <- lm(Tmpr ~ Wv.Tmpr)	 
+summary(OLS.Tmpr)	
+plot(OLS.Tmpr$residuals, type = "l", col = "black", lwd = 2) # añadir bandas somreadas, outliers, etc.
+resid <- OLS.Tmpr$residuals
+plot(resid, type="l")

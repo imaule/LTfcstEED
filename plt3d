@@ -1,0 +1,33 @@
+# 3D PLOTS
+m.p <-layout( matrix( c(1,2,3,4,5,6), 3, 2, byrow = TRUE), c(1,1), c(1,1,1) ) #, respect = TRUE)
+layout.show(m.p)
+par(mar = c(0,0,0,0)) 
+Col <- alpha.col(col = "darkblue", alpha = 0.2)
+persp3D(incGDP, incTmpr, Fcst.Iter[ , , 4], col = Col, colkey = FALSE, contour = TRUE, bty= "g", zlim = c(-10,23),
+xlab = "GDP", ylab = "Tmpr", zlab = "Energy", ticktype="detailed", nticks=4, cex.axis=0.7, cex.lab=0.8)
+legend(-0.6, 0.45, "1.1. SVR", bty="n")
+t.Fcst.Iter <- array( 0, dim = c(n.Tmpr, n.GDP) )
+t.Fcst.Iter <- t(Fcst.Iter[ , , 4])
+persp3D(incTmpr, incGDP, t.Fcst.Iter, col = Col, colkey = FALSE, contour = TRUE, bty="g", zlim=c(-10,23), xlab="Tmpr", ylab="GDP", zlab="Energy",
+ticktype="detailed", nticks=4, cex.axis=0.7, cex.lab=0.8)
+legend(-0.6, 0.45, "1.2. SVR", bty="n")
+Col <- alpha.col(col = "darkred", alpha = 0.2)
+persp3D(incGDP, incTmpr, Fcst.Iter[ , , 7], col = Col, colkey = FALSE,contour = TRUE, bty="g", zlim=c(-10,23), xlab="GDP", ylab="Tmpr", zlab="Energy",
+ticktype="detailed", nticks=4, cex.axis=0.7, cex.lab=0.8)
+legend(-0.6, 0.45, "2.1. OLS", bty="n")
+t.Fcst.Iter.ols <- array( 0, dim = c(n.Tmpr, n.GDP) )
+t.Fcst.Iter.ols <- t(Fcst.Iter[ , , 7])
+persp3D(incTmpr, incGDP, t.Fcst.Iter.ols, col = Col, colkey = FALSE,  contour = TRUE, bty="g", zlim=c(-10,23), xlab="Tmpr", ylab="GDP", zlab="Energy",
+ticktype="detailed", nticks=4, cex.axis=0.7, cex.lab=0.8)
+legend(-0.6, 0.45, "2.2. OLS", bty="n")
+Col <- alpha.col(col = "darkgreen", alpha = 0.2)
+Fcst.Iter.diff <- array( 0, dim = c(n.GDP, n.Tmpr) )
+Fcst.Iter.diff <- Fcst.Iter[ , , 4] - Fcst.Iter[ , , 7]
+persp3D(incGDP, incTmpr, Fcst.Iter.diff, col = Col, colkey = FALSE,
+contour = TRUE, bty="g", zlim=c(-10,0), xlab="GDP", ylab="Tmpr", zlab="Energy",ticktype="detailed", nticks=4, cex.axis=0.7, cex.lab=0.8)
+legend(-0.6, 0.45, "3.1. SVR-OLS", bty="n")
+t.Fcst.Iter.diff <- array( 0, dim = c(n.Tmpr, n.GDP) )
+t.Fcst.Iter.diff <- t(Fcst.Iter.diff)
+persp3D(incTmpr, incGDP, t.Fcst.Iter.diff, col = Col, colkey = FALSE,
+contour = TRUE, bty="g", zlim=c(-10,0), xlab="Tmpr", ylab="GDP", zlab="Energy",ticktype="detailed", nticks=4, cex.axis=0.7, cex.lab=0.8)
+legend(-0.6, 0.45, "3.2. SVR-OLS", bty="n")

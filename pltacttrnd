@@ -1,0 +1,67 @@
+layout(1)
+m.p <-layout( matrix( c(1,2,3,4,5,6), 3, 2, byrow = TRUE), c(1,1), c(1,1,1) ) #, respect = TRUE)
+layout.show(m.p)
+locator(1)
+ejex <- c(1921:2022)
+plot(ejex, l_EPr[102:203], type = "l", col = "black", lwd = 2, bty= "l",
+xlab = "year", ylab = "Energy", cex.axis = 0.8, cex.lab = 0.9, cex.main = 0.5, cex.sub = 0.5,
+mgp = c(1.2,0.5,0))
+title( main = "1.1. Energy (logs., TWh)", cex.main = 1, font.main = 1, line = 0 )
+lines(ejex, Wv.l_EPr[102:203], col = "red", lwd = 2) 
+legend(2000, 8.8, legend = c("Energy", "Trend"),
+col = c("black", "red"), lty = 1, lwd = 1, bty = "n")
+polygon( c(ejex, rev(ejex)), c(l_EPr[102:203], rev(Wv.l_EPr[102:203])), 
+density = 45, col=rgb(0.8,0.4,0.1,0.3))
+OLS.l_EPr <- lm(l_EPr[102:203] ~ Wv.l_EPr[102:203])	 
+resid <- OLS.l_EPr$residuals ; std <- sqrt(var(resid))
+plot(ejex, resid, type = "l", col = "black", lwd = 2, bty = "l",
+xlab = "year", ylab = "Energy", cex.axis = 0.8, cex.lab = 0.9, cex.main = 0.5, cex.sub = 0.5,
+mgp = c(1.2,0.5,0))
+title( main = "1.2. Energy: residuals OLS on trend", cex.main = 1, font.main = 1, line = 0)	 
+std_2 <- rep(2*std, 102)
+lines(ejex, std_2, col = "red", lwd = 1)  
+mstd_2 <- rep(-2*std, 102)
+lines(ejex, mstd_2, col = "red", lwd = 1)  
+cero <- rep(0, 102)
+lines(ejex, cero, col = "black", lwd = 1)  
+polygon( c(ejex, rev(ejex)), c(std_2, rev(mstd_2)), 
+density = 25, col=rgb(0.8,0.4,0.1,0.3))
+plot(ejex, l_GDP[102:203], type = "l", col = "black", lwd = 2, bty= "l",
+xlab = "year", ylab = "GDP", cex.axis = 0.8, cex.lab = 0.9, cex.main = 0.5, cex.sub = 0.5, mgp = c(1.2,0.5,0))
+title( main = "2.1. GDP (logs., 2015 m. US$)", cex.main = 1, font.main = 1, line = 0 )
+lines(ejex, Wv.l_GDP[102:203], col = "red", lwd = 2) 
+legend(2000, 15.5, legend = c("GDP", "Trend"), col = c("black", "red"), lty = 1, lwd = 1, bty = "n")
+polygon( c(ejex, rev(ejex)), c(l_GDP[102:203], rev(Wv.l_GDP[102:203])), density = 45, col=rgb(0.8,0.4,0.1,0.3))
+OLS.l_GDP <- lm(l_GDP[102:203] ~ Wv.l_GDP[102:203])	 
+resid <- OLS.l_GDP$residuals ; std <- sqrt(var(resid))
+plot(ejex, resid, type = "l", col = "black", lwd = 2, bty = "l",
+xlab = "year", ylab = "GDP", cex.axis = 0.8, cex.lab = 0.9, cex.main = 0.5, cex.sub = 0.5,
+mgp = c(1.2,0.5,0))
+title( main = "2.2. GDP: residuals OLS on trend", cex.main = 1, font.main = 1, line = 0)		 
+std_2 <- rep(2*std, 102)
+lines(ejex, std_2, col = "red", lwd = 1)  
+mstd_2 <- rep(-2*std, 102)
+lines(ejex, mstd_2, col = "red", lwd = 1)  
+cero <- rep(0, 102)
+lines(ejex, cero, col = "black", lwd = 1)  
+polygon( c(ejex, rev(ejex)), c(std_2, rev(mstd_2)), density = 25, col=rgb(0.8,0.4,0.1,0.3))	
+plot(ejex, Tmpr[102:203], type = "l", col = "black", lwd = 2, bty= "l",
+xlab = "year", ylab = "Temperature", cex.axis = 0.8, cex.lab = 0.9, cex.main = 0.5, cex.sub = 0.5,
+mgp = c(1.2,0.5,0))
+title( main = "3.1. Temperature (Anomalies, ºC)", cex.main = 1, font.main = 1, line = 0 )
+lines(ejex, Wv.Tmpr[102:203], col = "red", lwd = 2) 
+legend(1993, 0.63, legend = c("Temperature", "Trend"), col = c("black", "red"), lty = 1, lwd = 1, bty = "n")
+polygon( c(ejex, rev(ejex)), c(Tmpr[102:203], rev(Wv.Tmpr[102:203])), density = 45, col=rgb(0.8,0.4,0.1,0.3))
+OLS.Tmpr <- lm(Tmpr[102:203] ~ Wv.Tmpr[102:203])	 
+resid <- OLS.Tmpr$residuals ; std <- sqrt(var(resid))
+plot(ejex, resid, type = "l", col = "black", lwd = 2, bty = "l",
+xlab = "year", ylab = "Temperature", cex.axis = 0.8, cex.lab = 0.9, cex.main = 0.5, cex.sub = 0.5, mgp = c(1.2,0.5,0))
+title( main = "3.2. Temperature: residuals OLS on trend", cex.main = 1, font.main = 1, line = 0)	 
+std_2 <- rep(2*std, 102)
+lines(ejex, std_2, col = "red", lwd = 1)  
+mstd_2 <- rep(-2*std, 102)
+lines(ejex, mstd_2, col = "red", lwd = 1)  
+cero <- rep(0, 102)
+lines(ejex, cero, col = "black", lwd = 1)  
+polygon( c(ejex, rev(ejex)), c(std_2, rev(mstd_2)), density = 25, col=rgb(0.8,0.4,0.1,0.3))
+		 

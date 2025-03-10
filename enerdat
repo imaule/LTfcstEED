@@ -1,0 +1,37 @@
+
+E_annual.mx <- as.matrix( read.table("Energy Western Europe.txt",
+                             sep="", dec=".", nrows=201, skip=9) )
+Pr_E <- log( E_annual.mx[1:201,2] )
+d_Pr_E <- rep(0, 201)
+d_Pr_E[2:201] <- Pr_E[2:201] - Pr_E[1:200]
+	# decadal
+E_country_dec.mx <- as.matrix( read.table("WE (GE-FR-I-S) Energy Consumption(MALANIMA) 2022 revision.txt",sep="", dec=".", nrows=21, skip=2) )
+E_country_dec <- E_country_dec.mx[,2] + E_country_dec.mx[,3] + E_country_dec.mx[,4] + E_country_dec.mx[,5]	 
+Rmx <- matrix(0, 21, 201)
+for (i in 1:21) {
+j <- (i - 1) * 10 + 1
+Rmx[i,j] <- 1 }
+tRmx <- t(Rmx)
+A <- matrix(0, 201, 201)
+A[1,1] <- 1
+for (i in 2:201) {
+j <- i - 1 ; A[i,j] <- -1
+A[i,i] <- 1}	
+D <- crossprod(A)
+Y <- log(E_country_dec)
+mY <- mean(Y) ; stdY <- sqrt(var(Y))
+normY <- (Y - mY) / stdY
+Ind <- as.vector(crossprod( tRmx , Pr_E))
+mI <- mean(Ind) ; stdI <- sqrt(var(Ind))
+normI <- (Ind - mI) / stdI
+cof <- cor(normY, normI)
+I <- cof * (Pr_E - mI) / stdI
+d_ <- as.vector( (crossprod(D, I) ) )
+interpol <- solve.QP( D, dvec = d_, Amat = tRmx, normY, meq = 21 )
+yh <- interpol$solution
+quad <- interpol$value
+matplot(c(1820:2020), cbind(yh, I), type="l")
+print(cbind(c(1820:2020),yh, I))
+Eh_annual <- exp( stdY * yh + mY )
+
+

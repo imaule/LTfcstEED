@@ -1,0 +1,30 @@
+# WB (1960 - 2022)
+All_GDP_WB.mx <- as.matrix( read.table("GDP-USD2015_WB-GR-NE-PO_1960-2022.txt", sep=",", dec=".", na.strings="NA", nrows=3) )
+GR_GDP_WB <- rep(0, 63) ; NE_GDP_WB <- rep(0, 63) ; PO_GDP_WB <- rep(0, 63)
+GR_GDP_WB <- as.vector(as.numeric(All_GDP_WB.mx[1,5:67]))
+NE_GDP_WB <- as.vector(as.numeric(All_GDP_WB.mx[2,5:67]))
+PO_GDP_WB <- as.vector(as.numeric(All_GDP_WB.mx[3,5:67]))
+# Madison ; (1820 - 2018)
+GR.mx <- as.matrix( read.table("GR - Y, Pop, Madison.txt", sep="", dec=".", na.strings="NA", nrows=199, skip=2) )
+GR_GDP_MD <- as.numeric(GR.mx[,4])*as.numeric(GR.mx[,5])
+inc <- (GR_GDP_MD[34] - GR_GDP_MD[14]) / 20	
+for (i in 0:13) {	GR_GDP_MD[14-i] <- GR_GDP_MD[15-i] - inc}	
+NE.mx <- as.matrix( read.table("NE - Y, Pop, Madison.txt", sep="", dec=".", na.strings="NA",  nrows=199, skip=2) )
+NE_GDP_MD <- as.numeric(NE.mx[,4])*as.numeric(NE.mx[,5])
+PO.mx <- as.matrix( read.table("PO - Y, Pop, Madison.txt", sep="", dec=".", na.strings="NA", nrows=199, skip=2) )
+PO_GDP_MD <- as.numeric(PO.mx[,4])*as.numeric(PO.mx[,5])
+inc <- (PO_GDP_MD[36] - PO_GDP_MD[31]) / 5	
+for (i in 32:35) {PO_GDP_MD[i] <- PO_GDP_MD[i-1] + inc}			
+inc <- (PO_GDP_MD[42] - PO_GDP_MD[36]) / 6	
+for (i in 37:41) {	PO_GDP_MD[i] <- PO_GDP_MD[i-1] + inc}
+inc <- (PO_GDP_MD[46] - PO_GDP_MD[42]) / 4	
+for (i in 43:45) {	PO_GDP_MD[i] <- PO_GDP_MD[i-1] + inc}
+GR_GDP <- rep(0, 203)	
+GR_GDP[141:203] <- GR_GDP_WB[1:63]
+GR_GDP[1:141] <- GR_GDP_MD[1:141] * (GR_GDP_WB[1] / GR_GDP_MD[141])
+NE_GDP <- rep(0, 203)	
+NE_GDP[151:203] <- NE_GDP_WB[1:53]
+NE_GDP[1:151] <- NE_GDP_MD[1:151] * (NE_GDP_WB[1] / NE_GDP_MD[151])
+PO_GDP <- rep(0, 203)	
+PO_GDP[141:203] <- PO_GDP_WB[1:63]
+PO_GDP[1:141] <- PO_GDP_MD[1:141] * (PO_GDP_WB[1] / PO_GDP_MD[141])

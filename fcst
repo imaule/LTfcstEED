@@ -1,0 +1,28 @@
+
+n.GDP <- 20 ; incGDP <- rep(0, n.GDP)
+n.Tmpr <- 20 ; incTmpr <- rep(0, n.Tmpr)
+Fcst.Iter <- array( 0, dim = c(n.GDP, n.Tmpr, 8))	
+for (i.GDP in 1:n.GDP) {
+incGDP[i.GDP] <- i.GDP * 0.0025 ; d_Wv.l_GDP[204:211] <- incGDP[i.GDP] 
+for (i.Tmpr in 1:n.Tmpr) {	
+incTmpr[i.Tmpr] <- -0.01 + i.Tmpr * 0.0025 ; d_Wv.Tmpr[204:211] <- incTmpr[i.Tmpr]			
+d_Wv.l_EPr[204:211] <- predict(mod1, cbind( d_Wv.l_GDP[204:211], d_Wv.Tmpr[204:211]) )
+Wv.l_EPr[211] <- sum(d_Wv.l_EPr[204:211]) + Wv.l_EPr[203]		
+EPr.f2030.SVM <- exp(Wv.l_EPr[211])
+T.gr.SVM <- (exp(Wv.l_EPr[211]-Wv.l_EPr[203]) - 1) * 100  
+Y.gr.SVM <- ( exp(Wv.l_EPr[211]-Wv.l_EPr[203])^0.125 - 1) * 100 
+d_Wv.l_EPr[204:211] <- gbh[1] + gbh[2] * d_Wv.l_GDP[204:211] + gbh[3] * d_Wv.Tmpr[204:211]
+Wv.l_EPr[211] <- sum(d_Wv.l_EPr[204:211]) + Wv.l_EPr[203]			
+EPr.f2030.OLS <- exp(Wv.l_EPr[211])
+T.gr.OLS <- (exp(Wv.l_EPr[211]-Wv.l_EPr[203]) - 1) * 100  
+Y.gr.OLS <- (exp(Wv.l_EPr[211]-Wv.l_EPr[203])^0.125 - 1) * 100  
+num.iter <- i.GDP*i.Tmpr
+Fcst.Iter[i.GDP, i.Tmpr, 1] <- incGDP[i.GDP]
+Fcst.Iter[i.GDP, i.Tmpr, 2] <- incTmpr[i.Tmpr]
+Fcst.Iter[i.GDP, i.Tmpr, 3] <- EPr.f2030.SVM
+Fcst.Iter[i.GDP, i.Tmpr, 4] <- T.gr.SVM
+Fcst.Iter[i.GDP, i.Tmpr, 5] <- Y.gr.SVM
+Fcst.Iter[i.GDP, i.Tmpr, 6] <- EPr.f2030.OLS
+Fcst.Iter[i.GDP, i.Tmpr, 7] <- T.gr.OLS		
+Fcst.Iter[i.GDP, i.Tmpr, 8] <- Y.gr.OLS}}
+

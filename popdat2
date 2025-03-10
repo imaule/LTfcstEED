@@ -1,0 +1,23 @@
+# Madison ; (1820 - 2018)
+GR.mx <- as.matrix( read.table("GR - Y, Pop, Madison.txt", sep="", dec=".", na.strings="NA",nrows=199, skip=2) )
+GR_Pop_MD <- as.numeric(GR.mx[,5])
+NE.mx <- as.matrix( read.table("NE - Y, Pop, Madison.txt", sep="", dec=".", na.strings="NA", nrows=199, skip=2) )
+NE_Pop_MD <- as.numeric(NE.mx[,5])
+PO.mx <- as.matrix( read.table("PO - Y, Pop, Madison.txt", sep="", dec=".", na.strings="NA", nrows=199, skip=2) )
+PO_Pop_MD <- as.numeric(PO.mx[,5])
+#   UN actual (1950 - 2023) ; forecast (2024 - 2100)
+UN_Pop_GR.mx <- as.matrix(read.table("Greece 1950-2100 UN pop.txt",sep="", dec=".", na.strings="NA", nrows=151, skip=4))
+GR_Pop_UN <- as.numeric(UN_Pop_GR.mx[,3])
+NE_Pop_GR.mx <- as.matrix(read.table("Netherlands 1950-2100 UN pop.txt", sep="", dec=".", na.strings="NA", nrows=151, skip=4))
+NE_Pop_UN <- as.numeric(NE_Pop_GR.mx[,3])
+PO_Pop_GR.mx <- as.matrix(read.table("Portugal 1950-2100 UN pop.txt", sep="", dec=".", na.strings="NA", nrows=151, skip=4))
+PO_Pop_UN <- as.numeric(PO_Pop_GR.mx[,3])
+GR_Pop <- rep (0, 281)
+GR_Pop[131:281] <- GR_Pop_UN[1:151] 
+GR_Pop[1:130] <- GR_Pop_MD[1:130] * GR_Pop_UN[1] / GR_Pop_MD[131]
+NE_Pop <- rep (0, 281)
+NE_Pop[131:281] <- NE_Pop_UN[1:151] 
+NE_Pop[1:130] <- NE_Pop_MD[1:130] * NE_Pop_UN[1] / NE_Pop_MD[131]
+PO_Pop <- rep (0, 281)
+PO_Pop[131:281] <- PO_Pop_UN[1:151] 
+PO_Pop[1:130] <- PO_Pop_MD[1:130] * PO_Pop_UN[1] / PO_Pop_MD[131]

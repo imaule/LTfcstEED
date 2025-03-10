@@ -1,0 +1,28 @@
+# Madison ; (1820 - 2018)
+FR.mx <- as.matrix( read.table("FR - Y, Pop - Madison.txt", sep="", dec=".", na.strings="NA",nrows=199, skip=2) )
+FR_Pop_MD <- as.numeric(FR.mx[,5])
+GE.mx <- as.matrix( read.table("GE - Y, Pop, Madison.txt", sep="", dec=".", na.strings="NA",nrows=199, skip=2) )
+GE_Pop_MD <- as.numeric(GE.mx[,5])
+IT.mx <- as.matrix( read.table("IT - Y, Pop - Madison.txt",sep="", dec=".", na.strings="NA", nrows=199, skip=2) )
+IT_Pop_MD <- as.numeric(IT.mx[,5])
+SP.mx <- as.matrix( read.table("SP - Y, Pop - Madison.txt", sep="", dec=".", na.strings="NA", nrows=199, skip=2) )
+SP_Pop_MD <- as.numeric(SP.mx[,5])										
+#  UN actual (1950 - 2022) ; forecast (2023 - 2060)				
+UN_Pop_all.mx <- as.matrix( read.table("unpopulation_dataportal_20240118115513.txt", sep="", dec=".", na.strings="NA",
+nrows=111*4, skip=1) )
+FR_Pop_UN <- as.numeric(UN_Pop_all.mx[1:111,27])
+GE_Pop_UN <- as.numeric(UN_Pop_all.mx[112:222,27])
+IT_Pop_UN <- as.numeric(UN_Pop_all.mx[223:333,27])
+SP_Pop_UN <- as.numeric(UN_Pop_all.mx[334:444,27])
+FR_Pop <- rep (0, 241)
+FR_Pop[131:241] <- FR_Pop_UN[1:111] 
+FR_Pop[1:131] <- FR_Pop_MD[1:131] * FR_Pop_UN[1] / FR_Pop_MD[131]
+GE_Pop <- rep (0, 241)
+GE_Pop[131:241] <- GE_Pop_UN[1:111] 
+GE_Pop[1:131] <- GE_Pop_MD[1:131] * GE_Pop_UN[1] / GE_Pop_MD[131]
+IT_Pop <- rep (0, 241)
+IT_Pop[131:241] <- IT_Pop_UN[1:111] 
+IT_Pop[1:131] <- IT_Pop_MD[1:131] * IT_Pop_UN[1] / IT_Pop_MD[131]
+SP_Pop <- rep (0, 241)
+SP_Pop[131:241] <- SP_Pop_UN[1:111] 
+SP_Pop[1:131] <- SP_Pop_MD[1:131] * SP_Pop_UN[1] / SP_Pop_MD[131]
