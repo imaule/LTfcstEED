@@ -1,0 +1,103 @@
+
+tr.EPr.mx <- as.matrix( read.table("../../../_series/energia/Trends - 2/EPr_7-countries_Trnd-ss-Wv-Kr_1820-2022.dat",
+sep="", dec=".", na.strings="NA", nrows=203, skip=5) )
+years     <- tr.EPr.mx[,1]
+l_EPr     <- tr.EPr.mx[,2]
+t2.l_EPr  <- tr.EPr.mx[,4]  
+tr.GDP.mx <- as.matrix( read.table("../../../_series/PIB/z-Trends - 2/GDP_7-countries_Trnd-ss-Wv-Kr_1820-2022.dat",
+sep="", dec=".", na.strings="NA", nrows=203, skip=4) )
+l_GDP     <- tr.GDP.mx[,2]
+t2.l_GDP  <- tr.GDP.mx[,4]  
+tr.Tmpr.mx <- as.matrix( read.table("../../../_series/temperatura/Trends/Tmpr_7-countries_Trnd-ss-Wv-Kr_1820-2022.dat",
+sep="", dec=".", na.strings="NA", nrows=203, skip=4) )
+Tmpr     <- tr.Tmpr.mx[,2]
+t2.Tmpr  <- tr.Tmpr.mx[,4]  
+d_l_EPr <- rep(0, 203) ; d_l_EPr[2:203] <- l_EPr[2:203] - l_EPr[1:202]
+d_l_GDP <- rep(0, 203) ; d_l_GDP[2:203] <- l_GDP[2:203] - l_GDP[1:202]
+d_Tmpr  <- rep(0, 203) ; d_Tmpr[2:203]  <- Tmpr[2:203] - Tmpr[1:202]
+wv_decomp <- modwt(l_EPr, wf = "la8", n.levels = 5, boundary = "reflection" )
+wv_decomp$d1[1:406] <- 0   
+wv_decomp$d2[1:406] <- 0
+wv_decomp$d3[1:406] <- 0
+wv_decomp$d4[1:406] <- 0
+Wv.l_EPr <- imodwt(wv_decomp)
+wv_decomp <- modwt(l_GDP, wf = "la8", n.levels = 5, boundary = "reflection" )
+wv_decomp$d1[1:406] <- 0   
+wv_decomp$d2[1:406] <- 0
+wv_decomp$d3[1:406] <- 0
+wv_decomp$d4[1:406] <- 0
+Wv.l_GDP <- imodwt(wv_decomp)
+wv_decomp <- modwt(Tmpr , wf = "la8", n.levels = 6, boundary = "reflection" )
+wv_decomp$d1[1:406] <- 0   
+wv_decomp$d2[1:406] <- 0
+wv_decomp$d3[1:406] <- 0
+wv_decomp$d4[1:406] <- 0
+wv_decomp$d5[1:406] <- 0
+Wv.Tmpr  <- imodwt(wv_decomp)
+d_Wv.l_EPr <- rep(0, 203) ; d_Wv.l_EPr[2:203] <- Wv.l_EPr[2:203] - Wv.l_EPr[1:202]
+d_Wv.l_GDP <- rep(0, 203) ; d_Wv.l_GDP[2:203] <- Wv.l_GDP[2:203] - Wv.l_GDP[1:202]
+d_Wv.Tmpr  <- rep(0, 203) ; d_Wv.Tmpr[2:203]  <- Wv.Tmpr[2:203] - Wv.Tmpr[1:202]	
+Kernel <- "laplacedot"   # "rbfdot"	
+scaling <- TRUE
+Cexp <- c(-7, -5, -3, -1, 1, 3, 5, 7, 9, 11, 13, 15, 17)
+ggexp <- c(5, 3, 1, -1, -3, -5, -7, -9, -11, -13, -15, -17)
+t1 <- 102 ; tT <- 203 ; nobs <- (tT - t1 + 1) ; t0 <- t1 - 1 ; tTm1 <- tT - 1
+y <- d_Wv.l_EPr[t1:tT]
+reg.svm <- cbind( d_Wv.l_GDP[t1:tT], d_Wv.Tmpr[t1:tT] )
+results.iter <- matrix( rep(0, times = 30*13*12*3 ), nrow=30*13*12, ncol=3 )
+init.time <- Sys.time()	
+error.min <- crossprod(y) ; irow.error.min <- 0
+for (ieps in 1:30) {
+eps <- ieps * 0.01 - 0.001
+for(iC in 1:13) {
+C0 <- 2^Cexp[iC]  
+for(igg in 1:12) {
+set.seed(71)
+sigma0 <- 2^ggexp[igg]
+mod0 <- ksvm(reg.svm, y, scaled = scaling, C = C0, kpar = list(sigma=sigma0), 
+cachesize = 2000, epsilon = eps, kernel = Kernel, cross = 5 )
+irow <- igg + (iC-1)*12 + (ieps-1)*13*12
+results.iter[irow,1] <- C0
+results.iter[irow,2] <- sigma0
+results.iter[irow,3] <- eps
+if ( (cross(mod0) < error.min) ) {
+error.min <- cross(mod0)
+irow.error.min <- irow
+}}}}
+mod1 <- ksvm(reg.svm, y, scaled = scaling, C = results.iter[irow.error.min,1], 
+kpar = list(sigma=results.iter[irow.error.min,2]), cachesize = 2000,
+epsilon = results.iter[irow.error.min,3], kernel = Kernel,
+cross = 5, prob.model = T )
+yh <- predict(mod1, reg.svm )  
+OLS.d_Wv.dat <- lm(d_Wv.l_EPr[102:203] ~ d_Wv.l_GDP[102:203] + d_Wv.Tmpr[102:203])
+summary(OLS.d_Wv.dat)
+gbh <- OLS.d_Wv.dat$coefficients    
+matplot(c(t1:tT), y, type="l", col ="black", lwd=2)
+lines(c(t1:tT), yh, type="l", col="red", lwd=2)
+for (i.l in 204:231) { l_GDP[i.l] <- 0.015 + l_GDP[i.l-1]}	
+for (i.l in 204:231) { Tmpr[i.l] <- 0.04 + Tmpr[i.l-1]}	
+wv_decomp <- modwt(l_GDP, wf = "la8", n.levels = 4, boundary = "reflection" )
+wv_decomp$d1[1:462] <- 0 ; wv_decomp$d2[1:462] <- 0 ; wv_decomp$d3[1:462] <- 0
+Wv.l_GDP <- imodwt(wv_decomp)
+wv_decomp <- modwt(Tmpr , wf = "la8", n.levels = 6, boundary = "reflection" )
+wv_decomp$d1[1:462] <- 0 ; wv_decomp$d2[1:462] <- 0 ; wv_decomp$d3[1:462] <- 0
+wv_decomp$d4[1:462] <- 0 ; wv_decomp$d5[1:462] <- 0
+Wv.Tmpr  <- imodwt(wv_decomp)	
+d_Wv.l_GDP <- rep(0, 231) ; d_Wv.l_GDP[2:231] <- Wv.l_GDP[2:231] - Wv.l_GDP[1:230]
+d_Wv.Tmpr  <- rep(0, 231) ; d_Wv.Tmpr[2:231]  <- Wv.Tmpr[2:231] - Wv.Tmpr[1:230]	
+d_Wv.l_EPr[204:231] <- predict(mod1, cbind( d_Wv.l_GDP[204:231], d_Wv.Tmpr[204:231]) )
+Wv.l_EPr[231] <- sum(d_Wv.l_EPr[204:231]) + Wv.l_EPr[203]		
+EPr.f2030.SVM <- exp(Wv.l_EPr[231])
+T.gr.SVM <- (exp(Wv.l_EPr[231]-Wv.l_EPr[203]) - 1) * 100  # tasa total en %
+Y.gr.SVM <- ( exp(Wv.l_EPr[231]-Wv.l_EPr[203])^0.0357143 - 1) * 100  
+d_Wv.l_EPr[204:231] <- gbh[1] + gbh[2] * d_Wv.l_GDP[204:231] + gbh[3] * d_Wv.Tmpr[204:231]
+Wv.l_EPr[231] <- sum(d_Wv.l_EPr[204:231]) + Wv.l_EPr[203]			
+EPr.f2030.OLS <- exp(Wv.l_EPr[231])
+T.gr.OLS <- (exp(Wv.l_EPr[231]-Wv.l_EPr[203]) - 1) * 100  # tasa total en %
+Y.gr.OLS <- (exp(Wv.l_EPr[231]-Wv.l_EPr[203])^0.0357143 - 1) * 100  
+"SVM"
+print( c("gr.(2050/2022) = ", T.gr.SVM))
+print( c("annual =           ", Y.gr.SVM))
+"OLS"
+print( c("gr.(2050/2022) = ", T.gr.OLS))
+print( c("annual =           ", Y.gr.OLS))
